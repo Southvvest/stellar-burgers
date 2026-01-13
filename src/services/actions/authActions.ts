@@ -1,32 +1,29 @@
 import { AppDispatch } from '../store';
-import { setUser, setAuthChecked } from 'src/services/reducers';
-
+import { setUser, setAuthChecked } from '../reducers/authSlice';
+import { getUserApi } from '@api';
 
 export const checkUserAuth = () => async (dispatch: AppDispatch) => {
-  // Извлечь токен из localStorage или cookies, если есть
+  // Извлечь токен из localStorage или cookies
   const token = localStorage.getItem('accessToken');
 
   if (!token) {
-    // Нет токена — сразу считаем, что проверка завершена, пользователь не авторизован
+    // Нет токена — пользователь не авторизован
     dispatch(setUser(null));
     dispatch(setAuthChecked(true));
     return;
   }
 
   try {
-    const res = await fetch('/api/auth/validate', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (res.ok) {
-      const userData = await res.json();
-      dispatch(setUser(userData));
-    } else {
-      // токен недействительный
-      dispatch(setUser(null));
-    }
+    // Проверяем валидность токена через API
+    const userData = await getUserApi();
+    dispatch(setUser(userData.user));
   } catch (err) {
     console.error('Ошибка проверки авторизации', err);
+    // При ошибке считаем пользователя неавторизованным
     dispatch(setUser(null));
+    // Очищаем недействительные токены
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
   } finally {
     dispatch(setAuthChecked(true));
   }

@@ -1,26 +1,39 @@
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
-import { ConstructorPage } from '@pages';
-import { Login } from '@pages';
-import { Register } from '@pages';
-import { ForgotPassword } from '@pages';
-import { ResetPassword } from '@pages';
-import { Profile } from '@pages';
-import { ProfileOrders } from '@pages';
-import { Feed } from '@pages';
-import { NotFound404 } from '@pages';
-import { IngredientDetails } from '@components';
-import { OrderInfo } from '@components';
-import { Modal } from '@components';
-import { AppHeader } from '@components';
+import { useEffect } from 'react';
+import { useDispatch } from '../../services/store';
+import { checkUserAuth } from '../../services/actions/authActions';
+
+import {
+  ConstructorPage,
+  Feed,
+  Login,
+  Register,
+  ForgotPassword,
+  ResetPassword,
+  Profile,
+  ProfileOrders,
+  NotFound404
+} from '@pages';
+
+import { IngredientDetails, OrderInfo, Modal, AppHeader } from '@components';
+
+import ProtectedRoute from '../protected-route';
+
 import '../../index.css';
 import styles from './app.module.css';
 
 const App = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // Для модальных роутов
   const backgroundLocation = location.state && location.state.background;
+
+  // Проверка авторизации при монтировании приложения
+  useEffect(() => {
+    dispatch(checkUserAuth());
+  }, [dispatch]);
 
   const closeModal = () => {
     navigate(-1);
@@ -30,17 +43,66 @@ const App = () => {
     <div className={styles.app}>
       <AppHeader />
 
-      {/* Основные роуты */}
+      {/* Основные маршруты */}
       <Routes location={backgroundLocation || location}>
+        {/* Главная страница */}
         <Route path='/' element={<ConstructorPage />} />
+
+        {/* Страница ленты */}
         <Route path='/feed' element={<Feed />} />
+
+        {/* Защищённые маршруты */}
+        <Route
+          path='/login'
+          element={
+            <ProtectedRoute onlyUnAuth>
+              <Login />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/register'
+          element={
+            <ProtectedRoute onlyUnAuth>
+              <Register />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/forgot-password'
+          element={
+            <ProtectedRoute onlyUnAuth>
+              <ForgotPassword />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/reset-password'
+          element={
+            <ProtectedRoute onlyUnAuth>
+              <ResetPassword />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Защищённые роуты */}
-        <Route path='/login' element={<Login />} />
-        <Route path='/register' element={<Register />} />
-        <Route path='/forgot-password' element={<ForgotPassword />} />
-        <Route path='/reset-password' element={<ResetPassword />} />
-        <Route path='/profile' element={<Profile />} />
-        <Route path='/profile/orders' element={<ProfileOrders />} />
+        <Route
+          path='/profile'
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/profile/orders'
+          element={
+            <ProtectedRoute>
+              <ProfileOrders />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Не защищённые */}
         <Route path='*' element={<NotFound404 />} />
       </Routes>
@@ -66,7 +128,7 @@ const App = () => {
               </Modal>
             }
           />
-          {/* /profile/orders/:number как модалка */}
+          {/* /profile/orders/:number как модалка (защищённый маршрут) */}
           <Route
             path='/profile/orders/:number'
             element={

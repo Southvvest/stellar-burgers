@@ -1,34 +1,43 @@
 import React from 'react';
-import { useSelector } from 'src/services/store';
-import { isAuthCheckedSelector, getUser } from 'src/services/reducers';
+import { useSelector } from '../../services/store';
+import {
+  isAuthCheckedSelector,
+  getUser
+} from '../../services/reducers/selectors';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Preloader } from '@ui';
 
 type ProtectedRouteProps = {
   children: React.ReactNode;
+  onlyUnAuth?: boolean;
 };
 
-export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+export const ProtectedRoute = ({
+  children,
+  onlyUnAuth = false
+}: ProtectedRouteProps) => {
   const isAuthChecked = useSelector(isAuthCheckedSelector);
   const user = useSelector(getUser);
   const location = useLocation();
 
+  // Показывать прелоадер, пока не завершит проверку авторизации
   if (!isAuthChecked) {
-    // Пока проверка авторизации — показываем прелоадер
     return <Preloader />;
   }
 
-  if (!user) {
-    // Не авторизован — редирект на /login, с сохранением исходного урла
-    return (
-      <Navigate
-        to="/login"
-        replace
-        state={{ from: location }}
-      />
-    );
+  // Если пользователь авторизован
+  if (onlyUnAuth && user) {
+    // Редиректим на главную страницу
+    return <Navigate to='/' replace />;
   }
 
-  // Авторизован — показываем защищенное содержимое
+  // Если требуется авторизация, и пользователь не авторизован
+  if (!onlyUnAuth && !user) {
+    // Редиректим на страницу логина, сохраняя предыдущий путь
+    return <Navigate to='/login' state={{ from: location }} replace />;
+  }
+
   return <>{children}</>;
 };
+
+export default ProtectedRoute;
