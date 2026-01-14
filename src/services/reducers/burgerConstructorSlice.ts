@@ -1,14 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TConstructorIngredient } from '@utils-types';
+import { TConstructorIngredient, TOrder } from '@utils-types';
 
 interface BurgerConstructorState {
   bun: TConstructorIngredient | null;
   ingredients: TConstructorIngredient[];
+  orderRequest: boolean;
+  orderModalData: TOrder | null;
 }
 
 const initialState: BurgerConstructorState = {
   bun: null,
-  ingredients: []
+  ingredients: [],
+  orderRequest: false,
+  orderModalData: null
 };
 
 const burgerConstructorSlice = createSlice({
@@ -40,9 +44,17 @@ const burgerConstructorSlice = createSlice({
     clearConstructor: (state) => {
       state.bun = null;
       state.ingredients = [];
+      state.orderRequest = false;
+      state.orderModalData = null;
     },
     setBun: (state, action: PayloadAction<TConstructorIngredient>) => {
       state.bun = action.payload;
+    },
+    setOrderRequest: (state, action: PayloadAction<boolean>) => {
+      state.orderRequest = action.payload;
+    },
+    setOrderModalData: (state, action: PayloadAction<TOrder | null>) => {
+      state.orderModalData = action.payload;
     }
   }
 });
@@ -52,7 +64,9 @@ export const {
   removeIngredient,
   moveIngredient,
   clearConstructor,
-  setBun
+  setBun,
+  setOrderRequest,
+  setOrderModalData
 } = burgerConstructorSlice.actions;
 
 export default burgerConstructorSlice.reducer;
