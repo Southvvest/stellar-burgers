@@ -5,7 +5,11 @@ import { useSelector, useDispatch } from '../../services/store';
 import { TTabMode } from '@utils-types';
 import { BurgerIngredientsUI } from '../ui/burger-ingredients';
 import { getIngredientsApi } from '@api';
-import { setIngredients } from '../../services/reducers/ingredientsSlice';
+import {
+  setIngredients,
+  setLoading,
+  setError
+} from '../../services/reducers/ingredientsSlice';
 
 export const BurgerIngredients: FC = () => {
   /** TODO: взять переменные из стора */
@@ -48,13 +52,20 @@ export const BurgerIngredients: FC = () => {
   }, [inViewBuns, inViewFilling, inViewSauces]);
 
   useEffect(() => {
-    getIngredientsApi()
-      .then((data) => {
-        dispatch(setIngredients(data));
-      })
-      .catch((err) => {
+    const fetchIngredients = async () => {
+      dispatch(setLoading(true)); // Явно устанавливаем loading: true
+      try {
+        const data = await getIngredientsApi();
+        dispatch(setIngredients(data)); // Успешно
+      } catch (err) {
         console.error('Ошибка загрузки ингредиентов:', err);
-      });
+        dispatch(setError('Не удалось загрузить ингредиенты')); // Устанавливаем ошибку
+      } finally {
+        dispatch(setLoading(false)); // ВСЕГДА сбрасываем loading (даже при ошибке)
+      }
+    };
+
+    fetchIngredients();
   }, [dispatch]);
 
   const onTabClick = (tab: string) => {
