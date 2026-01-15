@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TOrdersData } from '@utils-types';
-import { TOrder } from '@utils-types';
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { TOrdersData, TOrder } from '@utils-types';
+import { getFeedsApi } from '@api';
 
 interface FeedsState {
   orders: TOrder[];
@@ -17,6 +17,18 @@ const initialState: FeedsState = {
   loading: false,
   error: null
 };
+
+export const fetchFeeds = createAsyncThunk(
+  'feeds/fetchFeeds',
+  async (_, { dispatch, rejectWithValue }) => {
+    try {
+      const data = await getFeedsApi();
+      return data;
+    } catch (err) {
+      return rejectWithValue((err as Error).message || 'Ошибка загрузки ленты');
+    }
+  }
+);
 
 const feedsSlice = createSlice({
   name: 'feeds',
@@ -36,6 +48,23 @@ const feedsSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchFeeds.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchFeeds.fulfilled, (state, action) => {
+        state.orders = action.payload.orders;
+        state.total = action.payload.total;
+        state.totalToday = action.payload.totalToday;
+        state.loading = false;
+      })
+      .addCase(fetchFeeds.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
   }
 });
 

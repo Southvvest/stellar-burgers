@@ -3,6 +3,7 @@ import { FeedUI } from '@ui-pages';
 import { TOrder } from '@utils-types';
 import { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from '../../services/store';
+import { fetchFeeds } from '../../services/reducers/feedsSlice';
 import { getFeedsApi } from '@api';
 import {
   setFeeds,
@@ -15,20 +16,24 @@ export const Feed: FC = () => {
   const dispatch = useDispatch();
   const { orders, loading, error } = useSelector((state) => state.feeds);
 
-  useEffect(() => {
-    const fetchFeeds = async () => {
-      dispatch(setFeedsLoading(true));
-      try {
-        const data = await getFeedsApi();
-        dispatch(setFeeds(data));
-      } catch (err) {
-        dispatch(
-          setFeedsError((err as Error).message || 'Ошибка загрузки ленты')
-        );
-      }
-    };
+  // useEffect(() => {
+  //   const fetchFeeds = async () => {
+  //     dispatch(setFeedsLoading(true));
+  //     try {
+  //       const data = await getFeedsApi();
+  //       dispatch(setFeeds(data));
+  //     } catch (err) {
+  //       dispatch(
+  //         setFeedsError((err as Error).message || 'Ошибка загрузки ленты')
+  //       );
+  //     }
+  //   };
 
-    fetchFeeds();
+  //   fetchFeeds();
+  // }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchFeeds());
   }, [dispatch]);
 
   if (loading) {

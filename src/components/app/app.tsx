@@ -2,7 +2,6 @@ import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useDispatch } from '../../services/store';
 import { checkUserAuth } from '../../services/actions/authActions';
-
 import {
   ConstructorPage,
   Feed,
