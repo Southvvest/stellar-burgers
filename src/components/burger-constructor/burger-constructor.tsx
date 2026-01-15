@@ -9,6 +9,7 @@ import {
   setOrderModalData
 } from '../../services/reducers/burgerConstructorSlice';
 import { RootState } from '../../services/store';
+import { getUser } from '../../services/reducers/selectors';
 
 export const BurgerConstructor: FC = () => {
   const dispatch = useDispatch();
@@ -19,6 +20,8 @@ export const BurgerConstructor: FC = () => {
     (state: RootState) => state.burgerConstructor
   );
 
+  const user = useSelector(getUser);
+
   const constructorItems = {
     bun,
     ingredients
@@ -26,6 +29,12 @@ export const BurgerConstructor: FC = () => {
 
   const onOrderClick = () => {
     if (!constructorItems.bun || orderRequest) return;
+
+    // Проверка авторизации перед оформлением заказа
+    if (!user) {
+      navigate('/login', { state: { from: '/' } });
+      return;
+    }
 
     // Собираем ID ингредиентов
     const ingredientIds = [
