@@ -4,6 +4,7 @@ import { useDispatch } from '../../services/store';
 import { loginUserApi } from '@api';
 import { setCookie } from '../../utils/cookie';
 import { LoginUI } from '@ui-pages';
+import { setUser } from '../../services/reducers/authSlice';
 
 export const Login: FC = () => {
   const [email, setEmail] = useState('');
@@ -23,6 +24,9 @@ export const Login: FC = () => {
         // Сохраняем токены
         setCookie('accessToken', data.accessToken);
         localStorage.setItem('refreshToken', data.refreshToken);
+
+        // Обновляем состояние пользователя в Redux
+        dispatch(setUser(data.user));
 
         // Получаем предыдущий путь из location.state
         const from =
