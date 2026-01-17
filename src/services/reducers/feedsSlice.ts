@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { TOrdersData, TOrder } from '@utils-types';
-import { getFeedsApi } from '@api';
+import { getFeedsApi, getOrdersApi } from '@api';
 
 interface FeedsState {
   orders: TOrder[];
@@ -20,7 +20,7 @@ const initialState: FeedsState = {
 
 export const fetchFeeds = createAsyncThunk(
   'feeds/fetchFeeds',
-  async (_, { dispatch, rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
       const data = await getFeedsApi();
       return data;

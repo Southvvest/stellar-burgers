@@ -3,13 +3,18 @@ import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
 import { useSelector } from '../../services/store';
+import { useParams } from 'react-router-dom';
 
 export const OrderInfo: FC = () => {
+  const { number } = useParams<{ number: string }>();
+  const orderNumber = number ? parseInt(number) : 0;
+
   /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = useSelector(
-    (state) => state.burgerConstructor.orderModalData
-  );
+  const orders = useSelector((state) => state.feeds.orders);
   const ingredients = useSelector((state) => state.ingredients.ingredients);
+
+  // Находим заказ по номеру
+  const orderData = orders.find((order) => order.number === orderNumber);
 
   /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
