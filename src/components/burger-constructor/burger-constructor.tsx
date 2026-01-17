@@ -6,16 +6,17 @@ import { BurgerConstructorUI } from '@ui';
 import { useDispatch } from '../../services/store';
 import {
   setOrderRequest,
-  setOrderModalData
+  setOrderModalData,
+  clearConstructor
 } from '../../services/reducers/burgerConstructorSlice';
 import { RootState } from '../../services/store';
 import { getUser } from '../../services/reducers/selectors';
+import { orderBurgerApi } from '@api';
 
 export const BurgerConstructor: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // TODO: взять переменные constructorItems, orderRequest и orderModalData из стора
   const { bun, ingredients, orderRequest, orderModalData } = useSelector(
     (state: RootState) => state.burgerConstructor
   );
@@ -38,30 +39,29 @@ export const BurgerConstructor: FC = () => {
 
     // Собираем ID ингредиентов
     const ingredientIds = [
-      constructorItems.bun.id,
-      ...constructorItems.ingredients.map((item) => item.id)
+      constructorItems.bun._id,
+      ...constructorItems.ingredients.map((item) => item._id),
+      constructorItems.bun._id
     ];
 
     // Отправляем заказ
     dispatch(setOrderRequest(true));
 
-    setTimeout(() => {
-      const mockOrder: TOrder = {
-        _id: '123',
-        status: 'pending',
-        name: 'Ваш бургер',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        number: 12345,
-        ingredients: ingredientIds
-      };
-      dispatch(setOrderModalData(mockOrder));
-      dispatch(setOrderRequest(false));
-    }, 1500);
+    orderBurgerApi(ingredientIds)
+      .then((data) => {
+        dispatch(setOrderModalData(data.order));
+      })
+      .catch((error) => {
+        console.error('Ошибка при оформлении заказа:', error);
+      })
+      .finally(() => {
+        dispatch(setOrderRequest(false));
+      });
   };
 
   const closeOrderModal = () => {
     dispatch(setOrderModalData(null));
+    dispatch(clearConstructor());
     navigate(-1);
   };
 
