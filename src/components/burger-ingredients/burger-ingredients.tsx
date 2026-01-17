@@ -4,28 +4,14 @@ import { useSelector, useDispatch } from '../../services/store';
 
 import { TTabMode } from '@utils-types';
 import { BurgerIngredientsUI } from '../ui/burger-ingredients';
-import { fetchIngredients } from '../../services/reducers/ingredientsSlice';
 import { RootState } from '../../services/store';
-import { getIngredientsApi } from '@api';
-import {
-  setIngredients,
-  setLoading,
-  setError
-} from '../../services/reducers/ingredientsSlice';
 
 export const BurgerIngredients: FC = () => {
-  /** TODO: взять переменные из стора */
-
-  // console.log('BurgerIngredients рендерится!');
-
   const dispatch = useDispatch();
   const { ingredients, loading, error } = useSelector(
     (state: RootState) => state.ingredients
   );
 
-  // const buns = [];
-  // const mains = [];
-  // const sauces = [];
   const buns = ingredients.filter((ingredient) => ingredient.type === 'bun');
   const mains = ingredients.filter((ingredient) => ingredient.type === 'main');
   const sauces = ingredients.filter(
@@ -59,27 +45,6 @@ export const BurgerIngredients: FC = () => {
     }
   }, [inViewBuns, inViewFilling, inViewSauces]);
 
-  // useEffect(() => {
-  //   const fetchIngredients = async () => {
-  //     dispatch(setLoading(true)); // Явно устанавливаем loading: true
-  //     try {
-  //       const data = await getIngredientsApi();
-  //       dispatch(setIngredients(data)); // Успешно
-  //     } catch (err) {
-  //       console.error('Ошибка загрузки ингредиентов:', err);
-  //       dispatch(setError('Не удалось загрузить ингредиенты')); // Устанавливаем ошибку
-  //     } finally {
-  //       dispatch(setLoading(false)); // ВСЕГДА сбрасываем loading (даже при ошибке)
-  //     }
-  //   };
-
-  //   fetchIngredients();
-  // }, [dispatch]);
-
-  useEffect(() => {
-    dispatch(fetchIngredients());
-  }, [dispatch]);
-
   const onTabClick = (tab: string) => {
     setCurrentTab(tab as TTabMode);
     if (tab === 'bun')
@@ -90,8 +55,8 @@ export const BurgerIngredients: FC = () => {
       titleSaucesRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  if (loading) {
-    return null;
+  if (error) {
+    return <p>{error}</p>;
   }
 
   return (

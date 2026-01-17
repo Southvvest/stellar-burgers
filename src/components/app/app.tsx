@@ -2,6 +2,7 @@ import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useDispatch } from '../../services/store';
 import { checkUserAuth } from '../../services/actions/authActions';
+import { fetchIngredients } from '../../services/reducers/ingredientsSlice';
 import {
   ConstructorPage,
   Feed,
@@ -29,9 +30,10 @@ const App = () => {
   // Для модальных роутов
   const backgroundLocation = location.state && location.state.background;
 
-  // Проверка авторизации при монтировании приложения
+  // Проверка авторизации и загрузка ингредиентов при монтировании приложения
   useEffect(() => {
     dispatch(checkUserAuth());
+    dispatch(fetchIngredients());
   }, [dispatch]);
 
   const closeModal = () => {

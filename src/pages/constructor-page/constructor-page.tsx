@@ -11,14 +11,14 @@ export const ConstructorPage: FC = () => {
   /** TODO: взять переменную из стора */
   // const isIngredientsLoading = false;
   // console.log('ConstructorPage рендерится!');
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const isIngredientsLoading = useSelector(
     (state) => state.ingredients.loading
   );
 
-  useEffect(() => {
-    dispatch(fetchIngredients());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchIngredients());
+  // }, [dispatch]);
 
   return (
     <>
