@@ -1,4 +1,4 @@
-import React, { FC, memo } from 'react';
+import React, { FC, memo, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   CurrencyIcon,
@@ -13,6 +13,17 @@ import { OrderStatus } from '@components';
 export const OrderCardUI: FC<OrderCardUIProps> = memo(
   ({ orderInfo, maxIngredients, locationState }) => {
     const location = useLocation();
+
+    // Вычисление отображаемых ингредиентов
+    const { ingredientsToShow, remains } = useMemo(() => {
+      const toShow = orderInfo.ingredientsToShow.slice(0, maxIngredients);
+      const remainsCount =
+        orderInfo.ingredientsToShow.length > maxIngredients
+          ? orderInfo.ingredientsToShow.length - maxIngredients
+          : 0;
+
+      return { ingredientsToShow: toShow, remains: remainsCount };
+    }, [orderInfo.ingredientsToShow, maxIngredients]);
 
     return (
       <Link
@@ -37,7 +48,7 @@ export const OrderCardUI: FC<OrderCardUIProps> = memo(
         )}
         <div className={`pt-6 ${styles.order_content}`}>
           <ul className={styles.ingredients}>
-            {orderInfo.ingredientsToShow.map((ingredient, index) => {
+            {ingredientsToShow.map((ingredient, index) => {
               let zIndex = maxIngredients - index;
               let right = 20 * index;
               return (
@@ -49,9 +60,7 @@ export const OrderCardUI: FC<OrderCardUIProps> = memo(
                   <img
                     style={{
                       opacity:
-                        orderInfo.remains && maxIngredients === index + 1
-                          ? '0.5'
-                          : '1'
+                        remains && maxIngredients === index + 1 ? '0.5' : '1'
                     }}
                     className={styles.img}
                     src={ingredient.image_mobile}
@@ -61,7 +70,7 @@ export const OrderCardUI: FC<OrderCardUIProps> = memo(
                     <span
                       className={`text text_type_digits-default ${styles.remains}`}
                     >
-                      {orderInfo.remains > 0 ? `+${orderInfo.remains}` : null}
+                      {remains > 0 ? `+${remains}` : null}
                     </span>
                   ) : null}
                 </li>

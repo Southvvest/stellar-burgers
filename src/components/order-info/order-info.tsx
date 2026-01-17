@@ -5,20 +5,31 @@ import { TIngredient } from '@utils-types';
 import { useSelector } from '../../services/store';
 import { useParams } from 'react-router-dom';
 
+// Вычисление карты ингредиентов
+const useIngredientsMap = () => {
+  const ingredients = useSelector((state) => state.ingredients.ingredients);
+  return useMemo(() => {
+    const map = new Map<string, TIngredient>();
+    ingredients.forEach((ingredient) => {
+      map.set(ingredient._id, ingredient);
+    });
+    return map;
+  }, [ingredients]);
+};
+
 export const OrderInfo: FC = () => {
   const { number } = useParams<{ number: string }>();
   const orderNumber = number ? parseInt(number) : 0;
 
-  /** TODO: взять переменные orderData и ingredients из стора */
   const orders = useSelector((state) => state.feeds.orders);
-  const ingredients = useSelector((state) => state.ingredients.ingredients);
+  const ingredientsMap = useIngredientsMap();
 
   // Находим заказ по номеру
   const orderData = orders.find((order) => order.number === orderNumber);
 
   // Готовим данные для отображения
   const orderInfo = useMemo(() => {
-    if (!orderData || !ingredients.length) return null;
+    if (!orderData || !ingredientsMap.size) return null;
 
     const date = new Date(orderData.createdAt);
 
@@ -29,7 +40,7 @@ export const OrderInfo: FC = () => {
     const ingredientsInfo = orderData.ingredients.reduce(
       (acc: TIngredientsWithCount, item) => {
         if (!acc[item]) {
-          const ingredient = ingredients.find((ing) => ing._id === item);
+          const ingredient = ingredientsMap.get(item);
           if (ingredient) {
             acc[item] = {
               ...ingredient,
@@ -56,7 +67,7 @@ export const OrderInfo: FC = () => {
       date,
       total
     };
-  }, [orderData, ingredients]);
+  }, [orderData, ingredientsMap]);
 
   if (!orderInfo) {
     return <Preloader />;

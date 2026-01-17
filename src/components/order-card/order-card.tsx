@@ -8,18 +8,28 @@ import { OrderCardUI } from '../ui/order-card';
 
 const maxIngredients = 6;
 
+// Вычисление ингредиентов для всех заказов
+const useIngredientsMap = () => {
+  const ingredients = useSelector((state) => state.ingredients.ingredients);
+  return useMemo(() => {
+    const map = new Map<string, TIngredient>();
+    ingredients.forEach((ingredient) => {
+      map.set(ingredient._id, ingredient);
+    });
+    return map;
+  }, [ingredients]);
+};
+
 export const OrderCard: FC<OrderCardProps> = memo(({ order }) => {
   const location = useLocation();
-
-  /** TODO: взять переменную из стора */
-  const ingredients = useSelector((state) => state.ingredients.ingredients);
+  const ingredientsMap = useIngredientsMap();
 
   const orderInfo = useMemo(() => {
-    if (!ingredients.length) return null;
+    if (!ingredientsMap.size) return null;
 
     const ingredientsInfo = order.ingredients.reduce(
       (acc: TIngredient[], item: string) => {
-        const ingredient = ingredients.find((ing) => ing._id === item);
+        const ingredient = ingredientsMap.get(item);
         if (ingredient) return [...acc, ingredient];
         return acc;
       },
@@ -36,6 +46,7 @@ export const OrderCard: FC<OrderCardProps> = memo(({ order }) => {
         : 0;
 
     const date = new Date(order.createdAt);
+
     return {
       ...order,
       ingredientsInfo,
@@ -44,7 +55,7 @@ export const OrderCard: FC<OrderCardProps> = memo(({ order }) => {
       total,
       date
     };
-  }, [order, ingredients]);
+  }, [order, ingredientsMap]);
 
   if (!orderInfo) return null;
 
