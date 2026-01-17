@@ -41,6 +41,12 @@ const feedsSlice = createSlice({
       state.loading = false;
       state.error = null;
     },
+    updateFeeds: (state, action: PayloadAction<TOrdersData>) => {
+      // Обновляем данные в реальном времени
+      state.orders = action.payload.orders;
+      state.total = action.payload.total;
+      state.totalToday = action.payload.totalToday;
+    },
     setFeedsLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
@@ -68,5 +74,6 @@ const feedsSlice = createSlice({
   }
 });
 
-export const { setFeeds, setFeedsLoading, setFeedsError } = feedsSlice.actions;
+export const { setFeeds, updateFeeds, setFeedsLoading, setFeedsError } =
+  feedsSlice.actions;
 export default feedsSlice.reducer;

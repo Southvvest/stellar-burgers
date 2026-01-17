@@ -16,7 +16,7 @@ export const OrderInfo: FC = () => {
   // Находим заказ по номеру
   const orderData = orders.find((order) => order.number === orderNumber);
 
-  /* Готовим данные для отображения */
+  // Готовим данные для отображения
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
 
