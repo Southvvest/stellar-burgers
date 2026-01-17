@@ -4,8 +4,6 @@ import { BurgerIngredients } from '../../components/burger-ingredients';
 import { BurgerConstructor } from '../../components/burger-constructor';
 import { Preloader } from '../../components/ui';
 import { FC, useEffect } from 'react';
-import { fetchIngredients } from '../../services/reducers/ingredientsSlice';
-import { useDispatch } from '../../services/store';
 
 export const ConstructorPage: FC = () => {
   /** TODO: взять переменную из стора */
