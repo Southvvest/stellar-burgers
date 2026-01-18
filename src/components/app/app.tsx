@@ -28,7 +28,7 @@ const App = () => {
   const dispatch = useDispatch();
 
   // Для модальных роутов
-  const backgroundLocation = location.state && location.state.background;
+  const backgroundLocation = location.state?.background;
 
   // Проверка авторизации и загрузка ингредиентов при монтировании приложения
   useEffect(() => {
@@ -37,7 +37,12 @@ const App = () => {
   }, [dispatch]);
 
   const closeModal = () => {
-    navigate(-1);
+    const { pathname } = location;
+    if (pathname.startsWith('/profile/orders/')) {
+      navigate('/profile/orders');
+    } else {
+      navigate(-1);
+    }
   };
 
   return (
