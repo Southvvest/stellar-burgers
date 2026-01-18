@@ -1,9 +1,10 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useEffect } from 'react';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
-import { useSelector } from '../../services/store';
+import { useSelector, useDispatch } from '../../services/store';
 import { useParams } from 'react-router-dom';
+import { fetchFeeds } from '../../services/reducers/feedsSlice';
 
 // Вычисление карты ингредиентов
 const useIngredientsMap = () => {
@@ -21,8 +22,14 @@ export const OrderInfo: FC = () => {
   const { number } = useParams<{ number: string }>();
   const orderNumber = number ? parseInt(number) : 0;
 
+  const dispatch = useDispatch();
   const orders = useSelector((state) => state.feeds.orders);
   const ingredientsMap = useIngredientsMap();
+
+  // Если заказы ещё не загружены — подгружаем
+  useEffect(() => {
+    if (!orders.length) dispatch(fetchFeeds());
+  }, [dispatch, orders.length]);
 
   // Находим заказ по номеру
   const orderData = orders.find((order) => order.number === orderNumber);

@@ -41,7 +41,7 @@ const App = () => {
     if (pathname.startsWith('/profile/orders/')) {
       navigate('/profile/orders');
     } else {
-      navigate(-1);
+      navigate(backgroundLocation?.pathname || '/', { replace: true });
     }
   };
 
@@ -145,9 +145,11 @@ const App = () => {
           <Route
             path='/profile/orders/:number'
             element={
-              <Modal title='Детали заказа' onClose={closeModal}>
-                <OrderInfo />
-              </Modal>
+              <ProtectedRoute>
+                <Modal title='Детали заказа' onClose={closeModal}>
+                  <OrderInfo />
+                </Modal>
+              </ProtectedRoute>
             }
           />
         </Routes>
