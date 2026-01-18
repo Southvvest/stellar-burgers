@@ -1,16 +1,13 @@
 import { FC, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { TConstructorIngredient, TOrder } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
-import { useDispatch } from '../../services/store';
+import { useDispatch, useSelector } from '../../services/store';
 import {
   setOrderRequest,
   setOrderModalData,
   clearConstructor
 } from '../../services/reducers/burgerConstructorSlice';
-import { RootState } from '../../services/store';
-import { getUser } from '../../services/reducers/selectors';
 import { orderBurgerApi } from '@api';
 
 export const BurgerConstructor: FC = () => {
@@ -18,10 +15,10 @@ export const BurgerConstructor: FC = () => {
   const navigate = useNavigate();
 
   const { bun, ingredients, orderRequest, orderModalData } = useSelector(
-    (state: RootState) => state.burgerConstructor
+    (state) => state.burgerConstructor
   );
 
-  const user = useSelector(getUser);
+  const user = useSelector((state) => state.auth.user);
 
   const constructorItems = {
     bun,
