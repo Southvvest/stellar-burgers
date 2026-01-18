@@ -4,7 +4,7 @@ import { getUserApi } from '@api';
 
 export const checkUserAuth = () => async (dispatch: AppDispatch) => {
   // Извлечь токен из localStorage или cookies
-  const token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem('refreshToken');
 
   if (!token) {
     // Нет токена — пользователь не авторизован
@@ -22,7 +22,6 @@ export const checkUserAuth = () => async (dispatch: AppDispatch) => {
     // При ошибке считаем пользователя неавторизованным
     dispatch(setUser(null));
     // Очищаем недействительные токены
-    localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
   } finally {
     dispatch(setAuthChecked(true));
