@@ -40,6 +40,8 @@ const App = () => {
     const { pathname } = location;
     if (pathname.startsWith('/profile/orders/')) {
       navigate('/profile/orders');
+    } else if (pathname.startsWith('/feed/')) {
+      navigate('/feed');
     } else {
       navigate(backgroundLocation?.pathname || '/', { replace: true });
     }

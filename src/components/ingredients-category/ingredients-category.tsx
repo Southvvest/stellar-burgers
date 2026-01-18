@@ -3,14 +3,15 @@ import { TIngredientsCategoryProps } from './type';
 import { TIngredient } from '@utils-types';
 import { IngredientsCategoryUI } from '../ui/ingredients-category';
 import { useSelector } from '../../services/store';
-import { RootState } from '../../services/store';
+// import { RootState } from '../../services/store';
 
 export const IngredientsCategory = forwardRef<
   HTMLUListElement,
   TIngredientsCategoryProps
 >(({ title, titleRef, ingredients }, ref) => {
   const burgerConstructor = useSelector(
-    (state: RootState) => state.burgerConstructor
+    (state) => state.burgerConstructor
+    // (state: RootState) => state.burgerConstructor
   );
 
   // Вычисление счетчиков

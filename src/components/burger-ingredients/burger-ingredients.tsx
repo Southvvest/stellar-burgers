@@ -4,12 +4,13 @@ import { useSelector, useDispatch } from '../../services/store';
 
 import { TTabMode } from '@utils-types';
 import { BurgerIngredientsUI } from '../ui/burger-ingredients';
-import { RootState } from '../../services/store';
+// import { RootState } from '../../services/store';
 
 export const BurgerIngredients: FC = () => {
   const dispatch = useDispatch();
   const { ingredients, loading, error } = useSelector(
-    (state: RootState) => state.ingredients
+    (state) => state.ingredients
+    // (state: RootState) => state.ingredients
   );
 
   const buns = ingredients.filter((ingredient) => ingredient.type === 'bun');
