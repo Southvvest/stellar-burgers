@@ -47,6 +47,8 @@ export const BurgerConstructor: FC = () => {
     orderBurgerApi(ingredientIds)
       .then((data) => {
         dispatch(setOrderModalData(data.order));
+        // Очистка конструктора при успешном ответе
+        dispatch(clearConstructor());
       })
       .catch((error) => {
         console.error('Ошибка при оформлении заказа:', error);
@@ -58,7 +60,7 @@ export const BurgerConstructor: FC = () => {
 
   const closeOrderModal = () => {
     dispatch(setOrderModalData(null));
-    dispatch(clearConstructor());
+    // dispatch(clearConstructor());
     navigate(-1);
   };
 
