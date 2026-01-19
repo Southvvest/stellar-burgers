@@ -45,7 +45,7 @@ const burgerConstructorSlice = createSlice({
       state.bun = null;
       state.ingredients = [];
       state.orderRequest = false;
-      state.orderModalData = null;
+      // state.orderModalData = null;
     },
     setBun: (state, action: PayloadAction<TConstructorIngredient>) => {
       state.bun = action.payload;
